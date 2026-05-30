@@ -1,4 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using AssetSync.Api.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Tell app to use AppDbCOnext and SQLite using the connection string
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -13,6 +23,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
 var summaries = new[]
 {
