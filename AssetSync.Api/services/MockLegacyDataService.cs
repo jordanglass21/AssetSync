@@ -1,26 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using AssetSync.Api.Data;
 using AssetSync.Api.Models;
+using Microsoft.Extensions.Configuration;
+using AssetSync.Api.Configuration;
 
 namespace AssetSync.Api.Services;
 
 public class MockLegacyDataService : ILegacyDataService
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _config;
 
     // inject database context
-    public MockLegacyDataService(AppDbContext context)
+    public MockLegacyDataService(AppDbContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
     }
 
     public async Task<List<WarehouseSale>> GetLegacyDataAsync()
     {
-        // Pull baseline data
-        // AsNoTracking() makes it so EF Core ignores these objects - we don't want to push them
-        // back into our real db
-        // We limit the data set to 500 rows here so this can run a bit faster
-        var legacyData = await _context.WarehouseSales.AsNoTracking().Take(500).ToListAsync();
+
+        var query = _context.WarehouseSales.AsNoTracking().OrderBy(x => x.ItemCode);
+        var legacyData = await ReconciliationScope.ApplyScope(query, _config).ToListAsync();
 
         // manual corruption of data
         // Find our specific bottle - BOOTLEG RED (Item Code 100009)
