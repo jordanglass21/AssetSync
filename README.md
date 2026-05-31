@@ -12,6 +12,9 @@ I am building a reconciliation engine to bridge this gap. This tool will automat
 - Data Layer: Azure SQL (EF Core) & Oracle
 - Deployment: IIS
 - Version Control: Git
+  
+## Data Source
+The data driving this simulation is derived from the **Warehouse and Retail Sales** public dataset provided by the government of **Montgomery County, Maryland** (available via Data Montgomery / Kaggle). It contains authentic, monthly inventory movement records—including direct retail sales, warehouse bulk sales, and physical retail transfers—for a high-volume beverage distribution operation. Utilizing a real-world municipal ledger provides a highly realistic, production-grade schema for our reconciliation engine to process.
 
 ## Project Roadmap
 

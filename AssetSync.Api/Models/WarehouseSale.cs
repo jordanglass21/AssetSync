@@ -28,11 +28,11 @@ public class WarehouseSale
     public string? ItemType { get; set; }
 
     [Column("RETAIL SALES")]
-    public decimal RetailSales { get; set; }
+    public decimal? RetailSales { get; set; }
 
     [Column("RETAIL TRANSFERS")]
-    public decimal RetailTransfers { get; set; }
+    public decimal? RetailTransfers { get; set; }
 
     [Column("WAREHOUSE SALES")]
-    public decimal WarehouseSales { get; set; }
+    public decimal? WarehouseSales { get; set; }
 }

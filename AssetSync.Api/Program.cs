@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AssetSync.Api.Data;
+using AssetSync.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<ILegacyDataService, MockLegacyDataService>(); // This is where we wire up the dependency injection
+builder.Services.AddScoped<ReconciliationService>();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
