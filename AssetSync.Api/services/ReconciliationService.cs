@@ -108,7 +108,7 @@ public class ReconciliationService
         var metricDiscrepancies = new List<ReconciliationReport>();
 
         // DEBUG
-        System.Console.WriteLine($"Comparing Item {modernItem.ItemCode}: Modern={modernItem.WarehouseSales}, Legacy={legacyItem.WarehouseSales}");
+        // System.Console.WriteLine($"Comparing Item {modernItem.ItemCode}: Modern={modernItem.WarehouseSales}, Legacy={legacyItem.WarehouseSales}");
 
         if (Math.Abs((modernItem.WarehouseSales ?? 0) - (decimal)legacyItem.WarehouseSales) > 0.01M)
         {

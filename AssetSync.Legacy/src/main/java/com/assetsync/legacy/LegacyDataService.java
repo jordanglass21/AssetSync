@@ -109,23 +109,28 @@ public class LegacyDataService {
 
         List<LegacyItem> scope = new ArrayList<>(getScopedData());
         java.util.Random rand = new java.util.Random();
+        int[] offsets = {1, 2, 6, 12};
+        String[] metrics = {"retailSales", "retailTransfers", "warehouseSales"};
         int applied = 0;
 
         for (int i = 0; i < count && i < scope.size(); i++) {
             int randomIndex = rand.nextInt(scope.size());
             LegacyItem item = scope.get(randomIndex);
 
+            String metric = metrics[rand.nextInt(metrics.length)];
+            double offset = offsets[rand.nextInt(offsets.length)];
+            if (rand.nextBoolean()) offset = -offset;
+
             LegacyItem corrupted = new LegacyItem(
                     item.year(),
                     item.month(),
                     item.itemCode(),
                     item.itemDescription(),
-                    item.retailSales(),
-                    item.retailTransfers(),
-                    item.warehouseSales() + 100.00
+                    metric.equals("retailSales") ? item.retailSales() + offset : item.retailSales(),
+                    metric.equals("retailTransfers") ? item.retailTransfers() + offset : item.retailTransfers(),
+                    metric.equals("warehouseSales") ? item.warehouseSales() + offset : item.warehouseSales()
             );
 
-            // find by value match instead of reference
             for (int j = 0; j < legacyData.size(); j++) {
                 LegacyItem g = legacyData.get(j);
                 if (g.itemCode().equals(item.itemCode()) && g.year() == item.year() && g.month() == item.month()) {
