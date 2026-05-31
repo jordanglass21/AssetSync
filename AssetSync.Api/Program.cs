@@ -4,6 +4,19 @@ using AssetSync.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:5173",
+                builder.Configuration["AllowedOrigins"] ?? ""
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Tell app to use AppDbCOnext and SQLite using the connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -32,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("DevPolicy");
 app.MapControllers();
 
 app.Run();

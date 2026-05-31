@@ -1,0 +1,75 @@
+.landing {
+  padding-top: 8rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.landing-hero {
+  margin-bottom: 5rem;
+}
+
+.landing-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.landing-title span {
+  color: var(--color-primary);
+}
+
+.landing-subtitle {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.landing-cta {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--color-primary);
+  color: #0d1117;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+}
+
+.landing-cta:hover {
+  opacity: 0.85;
+}
+
+.landing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.landing-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.card-label {
+  display: block;
+  color: var(--color-primary);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.landing-card p {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
