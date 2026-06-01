@@ -1,6 +1,8 @@
 import { API_URL, LEGACY_URL } from './config'
 
 export interface DiscrepancyReport {
+  year: number,
+  month: number,
   itemCode: string
   itemDescription: string
   metric: string

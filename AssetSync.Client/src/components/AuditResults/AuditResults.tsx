@@ -27,6 +27,7 @@ export default function AuditResults({ result }: Props) {
             <tr>
               <th>Item Code</th>
               <th>Description</th>
+              <th>Period</th>
               <th>Metric</th>
               <th>Modern</th>
               <th>Legacy</th>
@@ -38,6 +39,7 @@ export default function AuditResults({ result }: Props) {
               <tr key={i}>
                 <td className="mono">{d.itemCode}</td>
                 <td>{d.itemDescription}</td>
+                <td className="mono">{d.month}/{d.year}</td>
                 <td className="mono">{d.metric}</td>
                 <td className="mono">{d.modernValue.toFixed(2)}</td>
                 <td className="mono">{d.legacyValue.toFixed(2)}</td>

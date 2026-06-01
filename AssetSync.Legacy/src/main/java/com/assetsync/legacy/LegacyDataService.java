@@ -108,24 +108,20 @@ public class LegacyDataService {
         if (legacyData.isEmpty()) return 0;
 
         List<LegacyItem> scope = new ArrayList<>(getScopedData());
+        java.util.Collections.shuffle(scope);
+
+        List<LegacyItem> targets = scope.subList(0, Math.min(count, scope.size()));
         java.util.Random rand = new java.util.Random();
         int[] offsets = {1, 2, 6, 12};
         String[] metrics = {"retailSales", "retailTransfers", "warehouseSales"};
-        int applied = 0;
 
-        for (int i = 0; i < count && i < scope.size(); i++) {
-            int randomIndex = rand.nextInt(scope.size());
-            LegacyItem item = scope.get(randomIndex);
-
+        for (LegacyItem item : targets) {
             String metric = metrics[rand.nextInt(metrics.length)];
             double offset = offsets[rand.nextInt(offsets.length)];
             if (rand.nextBoolean()) offset = -offset;
 
             LegacyItem corrupted = new LegacyItem(
-                    item.year(),
-                    item.month(),
-                    item.itemCode(),
-                    item.itemDescription(),
+                    item.year(), item.month(), item.itemCode(), item.itemDescription(),
                     metric.equals("retailSales") ? item.retailSales() + offset : item.retailSales(),
                     metric.equals("retailTransfers") ? item.retailTransfers() + offset : item.retailTransfers(),
                     metric.equals("warehouseSales") ? item.warehouseSales() + offset : item.warehouseSales()
@@ -138,11 +134,10 @@ public class LegacyDataService {
                     break;
                 }
             }
-            applied++;
         }
 
-        log.warn("Chaos injected: corrupted {} rows.", applied);
-        return applied;
+        log.warn("Chaos injected: corrupted {} rows.", targets.size());
+        return targets.size();
     }
 
     /**

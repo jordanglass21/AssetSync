@@ -7,6 +7,8 @@ namespace AssetSync.Api.Services;
 
 public class ReconciliationReport
 {
+    public int Year { get; set; }
+    public int Month { get; set; }
     public string ItemCode { get; set; } = string.Empty;
     public string ItemDescription { get; set; } = string.Empty;
     public string Metric { get; set; } = string.Empty;
@@ -132,6 +134,8 @@ public class ReconciliationService
     {
         return new ReconciliationReport
         {
+            Year = modernItem.Year,
+            Month = modernItem.Month,
             ItemCode = modernItem.ItemCode,
             ItemDescription = modernItem.ItemDescription,
             Metric = metricName,
