@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AssetSync.Api.Models;
 
+// TODO: Composite key (ItemCode + Month + Year) is not guaranteed unique.
+// If duplicates exist in the source CSV, FirstOrDefault silently discards them.
+// Consider logging a warning or flagging duplicate keys as an integrity violation.
+
 [Table("Warehouse_and_Retail_Sales")] // maps to SQLite data name
 [PrimaryKey(nameof(Year), nameof(Month), nameof(ItemCode))] // combines three columns to form unique id
 

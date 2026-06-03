@@ -140,6 +140,45 @@ public class LegacyDataService {
         return targets.size();
     }
 
+    public int chaosTargeted(String targetItemCode) {
+        if (legacyData.isEmpty()) return 0;
+
+        // TODO: clean this logic up a bit...
+        List<LegacyItem> scope = new ArrayList<>(getScopedData());
+        List<LegacyItem> targets = scope.subList(0, new ArrayList<>(getScopedData()).size());
+
+        java.util.Random rand = new java.util.Random();
+        String[] metrics = {"retailSales", "retailTransfers", "warehouseSales"};
+        int[] offsets = {1, 2, 6, 12};
+        int count = 0;
+
+        for (LegacyItem item : targets) {
+            if (item.itemCode().equals(targetItemCode)) {
+                String metric = metrics[rand.nextInt(metrics.length)];
+                double offset = offsets[rand.nextInt(offsets.length)];
+                if (rand.nextBoolean()) offset = -offset;
+
+                LegacyItem corrupted = new LegacyItem(
+                        item.year(), item.month(), item.itemCode(), item.itemDescription(),
+                        metric.equals("retailSales") ? item.retailSales() + offset : item.retailSales(),
+                        metric.equals("retailTransfers") ? item.retailTransfers() + offset : item.retailTransfers(),
+                        metric.equals("warehouseSales") ? item.warehouseSales() + offset : item.warehouseSales()
+                );
+                count ++;
+
+                for (int j = 0; j < legacyData.size(); j++) {
+                    LegacyItem g = legacyData.get(j);
+                    if (g.itemCode().equals(item.itemCode()) && g.year() == item.year() && g.month() == item.month()) {
+                        legacyData.set(j, corrupted);
+                        break;
+                    }
+                }
+            }
+        }
+        log.warn("Chaos injected: corrupted {} rows.", count);
+        return count;
+    }
+
     /**
      * Wipes the corrupted memory and reloads the clean CSV.
      */

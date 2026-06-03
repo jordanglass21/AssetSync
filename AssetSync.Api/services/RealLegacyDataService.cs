@@ -12,6 +12,9 @@ public class RealLegacyDataService : ILegacyDataService
         _httpClient = httpClient;
     }
 
+    // TODO: Add HttpClient timeout and cancellation token to legacy data fetch.
+    // Currently hangs indefinitely if the legacy service is unreachable.
+    // Consider a circuit breaker pattern for production resilience.
     public async Task<List<WarehouseSale>> GetLegacyDataAsync()
     {
         // Call to the Java Server

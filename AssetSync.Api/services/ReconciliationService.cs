@@ -42,6 +42,17 @@ public class ReconciliationService
      * 3. Async Job Scheduling: Audit triggers should return a 'jobId' and process 
      * in the background to prevent UI request timeouts.
      */
+
+    // TODO: FirstOrDefault on a List is O(n) — makes the reconciliation loop O(n*m).
+    // Refactor: load legacyData into a Dictionary<(string itemCode, int year, int month), WarehouseSale>
+    // before the loop for O(1) lookups and O(n) overall complexity.
+
+    // TODO: Reconciliation is one-directional — iterates modern and checks legacy.
+    // Rows present in legacy but absent in modern are invisible to this engine.
+    // Fix: after main loop, build a HashSet of modern keys and do a reverse pass
+    // over legacyData, flagging any key not found as "Missing in Modern".
+
+    // This is the method where actual reconciliation takes places
     public async Task<List<ReconciliationReport>> RunReconciliationAsync()
     {
         var discrepancies = new List<ReconciliationReport>();
@@ -59,6 +70,7 @@ public class ReconciliationService
             }
 
             // Find the Match
+            // .FirstOrDefault() - use this so we don't log duplicate entries
             var legacyItem = legacyData.FirstOrDefault(l =>
                 l.ItemCode != null &&
                 l.ItemCode.Trim() == modernItem.ItemCode.Trim() &&
@@ -105,6 +117,9 @@ public class ReconciliationService
         };
     }
 
+    // TODO: Apply 0.01M tolerance to RetailSales and RetailTransfers comparisons.
+    // Raw != on decimals from two different systems risks false positives on
+    // floating point precision differences, same risk as WarehouseSales.
     private List<ReconciliationReport> CompareMetrics(WarehouseSale modernItem, WarehouseSale legacyItem)
     {
         var metricDiscrepancies = new List<ReconciliationReport>();
@@ -145,7 +160,12 @@ public class ReconciliationService
     }
     private async Task<List<WarehouseSale>> GetModernDataAsync()
     {
+        // building query (derefenced execution)
+        // AsNoTracking() - read only so it is faster
+        // sort by item code
         var query = _context.WarehouseSales.AsNoTracking().OrderBy(x => x.ItemCode);
+        // .ToListAsync() -> actually returns the data from the context
+        // .ApplyScope(query, _config) - limits our scope based on configuration settings
         return await ReconciliationScope.ApplyScope(query, _config).ToListAsync();
     }
 }
