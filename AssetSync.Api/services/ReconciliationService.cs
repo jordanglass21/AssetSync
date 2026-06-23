@@ -58,7 +58,7 @@ public class ReconciliationService
         var discrepancies = new List<ReconciliationReport>();
 
         var modernData = await GetModernDataAsync();
-        var legacyData = await _legacyDataService.GetLegacyDataAsync();
+        var legacyData = await _legacyDataService.GetLegacyDataAsync(); // shoud be in a try catch
 
         foreach (var modernItem in modernData)
         {
