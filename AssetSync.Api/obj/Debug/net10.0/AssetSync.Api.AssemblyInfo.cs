@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AssetSync.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94f8174dc5a6d245d86a3fe32c1899c1c40fa6a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d4e7cb4c171d965dd9736ab6e1045781cd94215f")]
 [assembly: System.Reflection.AssemblyProductAttribute("AssetSync.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AssetSync.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

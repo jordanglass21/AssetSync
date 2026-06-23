@@ -22,6 +22,7 @@ public class ReconciliationService
     private readonly AppDbContext _context;
     private readonly ILegacyDataService _legacyDataService;
     private readonly IConfiguration _config;
+    private const decimal SalesTolerance = 0.01M;
 
     public ReconciliationService(AppDbContext context, ILegacyDataService legacyDataService, IConfiguration config)
     {
@@ -42,10 +43,6 @@ public class ReconciliationService
      * 3. Async Job Scheduling: Audit triggers should return a 'jobId' and process 
      * in the background to prevent UI request timeouts.
      */
-
-    // TODO: FirstOrDefault on a List is O(n) — makes the reconciliation loop O(n*m).
-    // Refactor: load legacyData into a Dictionary<(string itemCode, int year, int month), WarehouseSale>
-    // before the loop for O(1) lookups and O(n) overall complexity.
 
     // TODO: Reconciliation is one-directional — iterates modern and checks legacy.
     // Rows present in legacy but absent in modern are invisible to this engine.
@@ -132,17 +129,17 @@ public class ReconciliationService
         // DEBUG
         // System.Console.WriteLine($"Comparing Item {modernItem.ItemCode}: Modern={modernItem.WarehouseSales}, Legacy={legacyItem.WarehouseSales}");
 
-        if (Math.Abs((modernItem.WarehouseSales ?? 0) - (decimal)legacyItem.WarehouseSales) > 0.01M)
+        if (Math.Abs((modernItem.WarehouseSales ?? 0) - (decimal)legacyItem.WarehouseSales) > SalesTolerance)
         {
             metricDiscrepancies.Add(BuildReport(modernItem, legacyItem, "WarehouseSales", modernItem.WarehouseSales, (decimal)legacyItem.WarehouseSales));
         }
 
-        if (modernItem.RetailSales != legacyItem.RetailSales)
+        if (Math.Abs((modernItem.RetailSales ?? 0) - (legacyItem.RetailSales ?? 0)) > SalesTolerance)
         {
             metricDiscrepancies.Add(BuildReport(modernItem, legacyItem, "RetailSales", modernItem.RetailSales, legacyItem.RetailSales));
         }
 
-        if (modernItem.RetailTransfers != legacyItem.RetailTransfers)
+        if (Math.Abs((modernItem.RetailTransfers ?? 0) - (legacyItem.RetailTransfers ?? 0)) > SalesTolerance)
         {
             metricDiscrepancies.Add(BuildReport(modernItem, legacyItem, "RetailTransfers", modernItem.RetailTransfers, legacyItem.RetailTransfers));
         }
