@@ -58,7 +58,19 @@ public class ReconciliationService
         var discrepancies = new List<ReconciliationReport>();
 
         var modernData = await GetModernDataAsync();
-        var legacyData = await _legacyDataService.GetLegacyDataAsync(); // shoud be in a try catch
+        List<WarehouseSale> legacyData;
+        try
+        {
+            legacyData = await _legacyDataService.GetLegacyDataAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to retrieve legacy data.", ex);
+        }
+
+        var legacyLookup = legacyData
+            .Where(l => l.ItemCode != null)
+            .ToDictionary(l => (l.ItemCode!.Trim(), l.Year, l.Month));
 
         foreach (var modernItem in modernData)
         {
@@ -69,17 +81,10 @@ public class ReconciliationService
                 continue;
             }
 
-            // Find the Match
-            // .FirstOrDefault() - use this so we don't log duplicate entries
-            var legacyItem = legacyData.FirstOrDefault(l =>
-                l.ItemCode != null &&
-                l.ItemCode.Trim() == modernItem.ItemCode.Trim() &&
-                l.Year == modernItem.Year &&
-                l.Month == modernItem.Month);
-
-            // Orphan Check
-            if (legacyItem == null)
+            // O(1) Lookup
+            if (!legacyLookup.TryGetValue((modernItem.ItemCode.Trim(), modernItem.Year, modernItem.Month), out var legacyItem))
             {
+                // Orphan Check
                 discrepancies.Add(CreateMissingLegacyReport(modernItem));
                 continue;
             }
